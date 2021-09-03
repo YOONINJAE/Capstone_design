@@ -1,0 +1,46 @@
+#include <string.h>
+#include <ros.h>
+#include "Arduino.h"
+#include "DFRobotDFPlayerMini.h"
+
+#include <std_msgs/String.h>
+
+#include <actionlib_msgs/GoalStatusArray.h>
+
+DFRobotDFPlayerMini myDFPlayer;
+
+
+
+ros::NodeHandle nh;
+
+std_msgs::String str_msg;
+//ros::Publisher chatter("chatter", &str_msg);
+
+void statusCallback(const actionlib_msgs::GoalStatusArray& msg) {
+   if(msg.status_list[0].status){
+   int status = msg.status_list[0].status;
+   //str_msg.data = status;
+   //chatter.publish( &str_msg );}
+   }
+  myDFPlayer.volume(30);  //Set volume value. From 0 to 30
+  myDFPlayer.play(1);  //Play the first mp3
+}
+
+ros::Subscriber <actionlib_msgs::GoalStatusArray> msg("/move_base/status", statusCallback); 
+char hello[13] = "hello world!";
+void setup()
+{
+  Serial2.begin(9600);
+
+  nh.initNode(); 
+  nh.getHardware()->setBaud(57600);
+  nh.subscribe(msg);    
+  //nh.advertise(chatter); 
+}
+
+
+void loop()
+{
+
+  nh.spinOnce();
+}
