@@ -1,0 +1,46 @@
+#include <ros.h>
+#include "Arduino.h"
+#include "DFRobotDFPlayerMini.h"
+#include <std_msgs/String.h>
+#include <std_msgs/UInt8.h>
+#include <move_base_msgs/MoveBaseActionResult.h>
+
+// MP3 Object declare
+DFRobotDFPlayerMini myDFPlayer;
+
+//node handle declare
+ros::NodeHandle nh;
+
+//Topic Data type 
+std_msgs::UInt8 arr_msg;
+
+//Pusblish use this sentence ,, when arrive take this topic
+ros::Publisher chatter("chatter", &arr_msg);
+
+//Subscribe
+void Callback(const move_base_msgs::MoveBaseActionResult& msg) {
+   arr_msg.data = msg.status.status;
+   chatter.publish( &arr_msg );
+   myDFPlayer.volume(30);  
+   myDFPlayer.play(0);
+}
+ros::Subscriber <move_base_msgs::MoveBaseActionResult> msg("/move_base/result", Callback); 
+
+
+void setup()
+{
+  //Set mp3 Serial
+  Serial2.begin(9600); 
+  myDFPlayer.begin(Serial2);
+
+  nh.initNode(); 
+  nh.getHardware()->setBaud(57600);
+  nh.subscribe(msg);    
+  nh.advertise(chatter); 
+}
+
+void loop()
+{
+  nh.spinOnce();
+}
+
