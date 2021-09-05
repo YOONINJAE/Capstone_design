@@ -107,7 +107,8 @@ void setup()
   nh.getHardware()->setBaud(57600);
   nh.subscribe(msg);    
   nh.advertise(chatter); 
-  nh.advertise(speed_pub);  
+  nh.advertise(speed_pub);
+  nh.subscribe(cmd_vel);
 }
 
 void loop()
