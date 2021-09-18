@@ -23,40 +23,20 @@ void Serial_Event();
 
 unsigned long lastMilli = 0;
 
-
+//wheel & speed variables
 const double radius = 0.032;                 //Wheel radius, in m 우리껀0.064
 const double wheelbase = 0.17;              //Wheelbase, in m 우리건 0.17
 
-///////////////////
 double speed_req = 0;                         //Desired linear speed for the robot, in m/s
 double angular_speed_req = 0;                 //Desired angular speed for the robot, in rad/s
 
 double speed_req_left = 0;                    //Desired speed for left wheel in m/s
-
-double speed_act_left1 = 0;                    //Actual speed for left wheel in m/s
-double speed_cmd_left1 = 0;                    //Command speed for left wheel in m/s
-
-
-double speed_act_left2 = 0;                    //Actual speed for left wheel in m/s
-double speed_cmd_left2 = 0;                    //Command speed for left wheel in m/s
-
 double speed_req_right = 0;                   //Desired speed for right wheel in m/s
-
-double speed_act_right1 = 0;                   //Actual speed for right wheel in m/s
-double speed_cmd_right1 = 0;                   //Command speed for right wheel in m/s
-
-
-double speed_act_right2 = 0;                   //Actual speed for right wheel in m/s
-double speed_cmd_right2 = 0;                   //Command speed for right wheel in m/s
-
-const double max_speed = 1.34;
-//const double min_speed = 0.85;                //Max speed in m/s
 
 // MP3 Object declare
 DFRobotDFPlayerMini myDFPlayer;
 ros::NodeHandle nh;
 std_msgs::UInt8 arr_msg;
-ros::Publisher chatter("chatter", &arr_msg);
 
 //Subscribe
 void Callback(const move_base_msgs::MoveBaseActionResult& msg);
@@ -72,7 +52,6 @@ void handle_cmd (const geometry_msgs::Twist& cmd_vel) {
   speed_req_left = speed_req - angular_speed_req * (wheelbase / 2); //Calculate the required speed for the left motor to comply with commanded linear and angular speeds
   speed_req_right = speed_req + angular_speed_req * (wheelbase / 2); //Calculate the required speed for the right motor to comply with commanded linear and angular speeds
 
-  //@@@@@@@@@@@@@@@@@@@@@@@@추가한 코드@@@@@@@@@@@@@@@@@@@@@@@@@@@@ 
   //m/s --> rad/s 단위환산 필요
   // 입력받은 command를 모터제어기로
   String cmd_str = "mvc=";  //command to moonwalker string variable
@@ -89,7 +68,6 @@ void handle_cmd (const geometry_msgs::Twist& cmd_vel) {
   
   cmd_str += buf_velocity_R + buf_velocity_L;
   Serial3.println(cmd_str);
-  //@@@@@@@@@@@@@@@@@@@@@@@@추가한 코드@@@@@@@@@@@@@@@@@@@@@@@@@@@@ 
 }
 
 ros::Subscriber<geometry_msgs::Twist> cmd_vel("cmd_vel", handle_cmd);   //create a subscriber to ROS topic for velocity commands (will execute "handle_cmd" function when receiving data)
@@ -102,20 +80,17 @@ void setup()
   Serial2.begin(9600); 
   Serial3.begin(115200);
   myDFPlayer.begin(Serial2);
-  
+
   nh.initNode(); 
   nh.getHardware()->setBaud(57600);
   nh.subscribe(msg);    
-  nh.advertise(chatter); 
-  nh.advertise(speed_pub);
+  nh.advertise(speed_pub);  
   nh.subscribe(cmd_vel);
 }
 
 void loop()
 {
-  nh.spinOnce();
-      //----------------------------------
-
+  //nh.spinOnce();
     if ((millis() - lastMilli) >= LOOPTIME) {     //write an error if execution time of the loop in longer than the specified looptime
       Serial.println(" TOO LONG ");
     }
@@ -133,10 +108,10 @@ void loop()
 
 // subscribe the Result 
 void Callback(const move_base_msgs::MoveBaseActionResult& msg) {
-   arr_msg.data = msg.status.status;
-   chatter.publish( &arr_msg );
+   arr_msg.data = msg.status.status; 
    myDFPlayer.volume(30);  
    myDFPlayer.play(2);
+   
 }
 //Publish function for odometry, uses a vector type message to send the data (message type is not meant for that but that's easier than creating a specific message type)
 
