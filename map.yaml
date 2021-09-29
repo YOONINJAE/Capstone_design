@@ -1,4 +1,4 @@
-image: /home/yoon/map.pgm
+image: /home/yoon/catkin_ws/src/linorobot/maps/map.pgm
 resolution: 0.050000
 origin: [-50.000000, -50.000000, 0.000000]
 negate: 0
