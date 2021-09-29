@@ -63,7 +63,7 @@ void handle_cmd (const geometry_msgs::Twist& cmd_vel) {
   speed_req_left = speed_req - angular_speed_req * (wheelbase / 2); //Calculate the required speed for the left motor to comply with commanded linear and angular speeds
   speed_req_right = speed_req + angular_speed_req * (wheelbase / 2); //Calculate the required speed for the right motor to comply with commanded linear and angular speeds
 
-  //@@@@@@@@@@@@@@@@@@@@@@@@추가한 코드@@@@@@@@@@@@@@@@@@@@@@@@@@@@ 
+  //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ 
   //m/s --> rad/s 단위환산 필요
   // 입력받은 command를 모터제어기로
   String cmd_str = "mvc=";  //command to moonwalker string variable
@@ -80,7 +80,8 @@ void handle_cmd (const geometry_msgs::Twist& cmd_vel) {
   
   cmd_str += buf_velocity_R + buf_velocity_L;
   Serial3.println(cmd_str);
-  //@@@@@@@@@@@@@@@@@@@@@@@@추가한 코드@@@@@@@@@@@@@@@@@@@@@@@@@@@@ 
+  //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ 
+  delay(100);
 }
 
 ros::Subscriber<geometry_msgs::Twist> cmd_vel("cmd_vel", handle_cmd);   //create a subscriber to ROS topic for velocity commands (will execute "handle_cmd" function when receiving data)
