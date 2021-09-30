@@ -89,7 +89,7 @@ geometry_msgs::Vector3Stamped speed_msg;                                //create
 ros::Publisher speed_pub("speed", &speed_msg);                          //create a publisher to ROS topic "speed" using the "speed_msg" type
 
 void setup() {
-  Serial3.begin(115200);                   //Moonwalker 통신
+  Serial3.begin(57600);                   //Moonwalker 통신
   nh.initNode();                            //init ROS node
   nh.getHardware()->setBaud(57600);         //set baud for ROS serial communication
   nh.subscribe(cmd_vel);                    //suscribe to ROS topic for velocity commands
