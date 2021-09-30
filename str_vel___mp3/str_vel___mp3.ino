@@ -66,8 +66,12 @@ void handle_cmd (const geometry_msgs::Twist& cmd_vel) {
   speed_req_left *= 60/(2*3.14)/radius;
   buf_velocity_L += String(speed_req_left);
   
+  //command motor driver
   cmd_str += buf_velocity_R + buf_velocity_L;
   Serial3.println(cmd_str);
+  
+  //loop delay for callback time
+  delay(100);
 }
 
 ros::Subscriber<geometry_msgs::Twist> cmd_vel("cmd_vel", handle_cmd);   //create a subscriber to ROS topic for velocity commands (will execute "handle_cmd" function when receiving data)
@@ -76,9 +80,9 @@ ros::Publisher speed_pub("speed", &speed_msg);
 
 void setup()
 {
-  //Set mp3 Serial
+  //Set mp3, motor driver Serial
   Serial2.begin(9600); 
-  Serial3.begin(115200);
+  Serial3.begin(57600);
   myDFPlayer.begin(Serial2);
 
   nh.initNode(); 
@@ -90,12 +94,7 @@ void setup()
 
 void loop()
 {
-  //nh.spinOnce();
-    if ((millis() - lastMilli) >= LOOPTIME) {     //write an error if execution time of the loop in longer than the specified looptime
-      Serial.println(" TOO LONG ");
-    }
-
-    //----------------------------------
+    nh.spinOnce();
 
     noCommLoops++;
     if (noCommLoops == 65535) {
@@ -111,7 +110,6 @@ void Callback(const move_base_msgs::MoveBaseActionResult& msg) {
    arr_msg.data = msg.status.status; 
    myDFPlayer.volume(30);  
    myDFPlayer.play(2);
-   
 }
 //Publish function for odometry, uses a vector type message to send the data (message type is not meant for that but that's easier than creating a specific message type)
 
